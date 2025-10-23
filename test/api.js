@@ -5,10 +5,10 @@ const url_base = "https://www.data.gouv.fr/api/2/organizations/search/?page_size
 // let qValide = true;
 let tableId;
 let results;
-const colsMap = { "ident": "ident", "name": "name", "slug": "slug" };
+const columnsMapping = { "id": "id", "name": "name", "slug": "slug" };
 const columnsMappingOptions = [
   {
-    name: "ident",
+    name: "id",
     title: "Identifiant de l'organisation",
     optional: false,
     allowMultiple: false
@@ -89,9 +89,9 @@ async function add(index, action) {
   try {
     await grist.docApi.applyUserActions([
       ['AddRecord', tableId, null, {
-        ident: result.id,
-        name: result.name,
-        slug: result.slug
+        [columnsMapping.id]: result.id,
+        [columnsMapping.name]: result.name,
+        [columnsMapping.slug]: result.slug
       }]
     ]);
     console.log('Row added successfully');
@@ -137,9 +137,9 @@ ready(function () {
   grist.ready({ requiredAccess: 'none', columns: columnsMappingOptions });
   grist.onRecords((table, mappings) => {
     getNbMax();
-    colsMap.ident = mappings.ident;
-    colsMap.name = mappings.name;
-    colsMap.slug = mappings.slug;
+    columnsMapping.id = mappings.id;
+    columnsMapping.name = mappings.name;
+    columnsMapping.slug = mappings.slug;
   });
   grist.onRecord((record, mappings) => {
     // id_record = record.id;
