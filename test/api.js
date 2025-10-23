@@ -40,6 +40,8 @@ async function search() {
     //   return;
     // }
     msg("&nbsp;");
+    const query = document.getElementById('search-input').value;
+    const url = url_base + query;
     const response = await fetch(url, {
       method: 'GET',
       headers: {
