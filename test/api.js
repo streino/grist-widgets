@@ -67,18 +67,20 @@ async function search() {
           `
           <div class="fr-container--fluid">
           <div class="fr-grid-row fr-grid-row--middle">
-            <span class="fr-ml-1w">
+            <span class="fr-mr-2w">
               <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--equisized fr-btns-group--sm">
                 <li>
-                  <button class="fr-btn fr-btn--secondary fr-mx-1v fr-my-0" onClick="add(${index}, 'organization', 'block')"> Block </button>
+                  <button class="fr-btn fr-btn--secondary fr-m-1v" onClick="add(${index}, 'organization', 'block')"> Block </button>
                 </li>
                 <li>
-                  <button class="fr-btn fr-mx-1v fr-my-0" onClick="add(${index}, 'organization', 'include')"> Include </button>
+                  <button class="fr-btn fr-m-1v" onClick="add(${index}, 'organization', 'include')"> Include </button>
                 </li>
               </ul>
             </span>
-            <span class="fr-ml-1w"> <img class="fr-border" src="${result.logo_thumbnail}" width="32" loading="lazy"/> </span>
-            <span class="fr-ml-1w"> <a href="${result.page}"> ${result.name} </a> - ${result.id} </span>
+            <span class="fr-mr-1w">
+              <img style="border: 1px solid lightgrey" src="${result.logo_thumbnail}" width="32" loading="lazy"/>
+            </span>
+            <span> <a href="${result.page}"> ${result.name} </a> - ${result.id} </span>
           </div>`;
       });
 
