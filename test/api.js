@@ -76,12 +76,11 @@ async function search() {
                 </li>
               </ul>
             </span>
-            <span class="fr-ml-1w">
+            <span class="fr-ml-1v">
               <img style="border: 1px solid lightgrey" src="${result.logo_thumbnail}" width="32" loading="lazy"/>
             </span>
-            <span> <a href="${result.page}"> ${result.name} </a> </span>
-            -
-            <span class="fr-text--sm"> ${result.id} </span>
+            <span class="fr-mx-1v"> <a href="${result.page}"> ${result.name} </a> </span>
+            <span class="fr-mx-1v"> [${result.id}] </span>
           </div>`;
       });
 
