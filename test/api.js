@@ -46,18 +46,19 @@ async function search() {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'X-Fields': 'data{id,name,slug}'
-        // 'X-Fields': 'data{id,logo_thumbnail,metrics,name,page,slug}'
+        'X-Fields': 'data{id,logo_thumbnail,metrics,name,page,slug}'
       }
     });
-    const results = await response.json();
+    const contents = await response.json();
+    const results = contents.data;
     // document.getElementById('debug').innerHTML = JSON.stringify(results);
 
     const tbody = document.querySelector('#search-results tbody');
     tbody.innerHTML = results.map((result) =>
       `<tr>
+      <td><img src="${result.logo_thumbnail}">
         <td>${result.id}</td>
-        <td>${result.name}</td>
+        <td><a href="${result.page}">${result.name}</a></td>
         <td>${result.slug}</td>
       </tr>`
     ).join("\n");
