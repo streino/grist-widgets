@@ -14,21 +14,24 @@
     </style>
   </head>
   <body>
-    <div class="fr-container">
+    <span class="fr-1v">
+    <div class="fr-container fr-container--fluid">
       <div class="fr-grid-row fr-grid-row--center">
         <div class="fr-col-8">
-          <div class="fr-search-bar" role="search">
+          <div class="fr-search-bar fr-p-1v" role="search">
             <label class="fr-label" for="search-input"> Rechercher </label>
             <input class="fr-input" aria-describedby="search-input-messages" placeholder="" id="search-input" type="search">
             <div class="fr-messages-group" id="search-input-messages" aria-live="polite"> </div>
             <button title="Rechercher" type="button" class="fr-btn" onClick="search()"> Rechercher </button>
           </div>
+        </div>
+        <div class="fr-col-8">
           <div id="info"> &nbsp; </div>
+        </div>
+        <div class="fr-col-12">
           <table id="search-results">
-            <thead>
-            </thead>
-            <tbody>
-            </tbody>
+            <thead> </thead>
+            <tbody> </tbody>
           </table>
         </div>
       </div>
