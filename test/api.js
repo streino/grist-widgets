@@ -65,7 +65,7 @@ async function add(index, action) {
   msg(`${action} ${index}: ${result.id}`)
 
   const tableId = await grist.getTable().getTableId();
-  const record = await grist.mapColumnNames({
+  const record = await grist.mapColumnNamesBack({
     id: result.id,
     name: result.name,
     slug: result.slug
