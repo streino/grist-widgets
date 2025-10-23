@@ -7,50 +7,20 @@ let qValide = true;
 const colsMap = { "numero": "numero", "nom_voie": "nom_voie", "code_postal": "code_postal", "ville": "ville", "dept": "dept", "region": "region", "x": "x", "y": "y" };
 const columnsMappingOptions = [
   {
-    name: "numero",
-    title: "Numéro de la voie",
+    name: "id",
+    title: "Identifiant de l'organisation",
     optional: false,
     allowMultiple: false
   },
   {
-    name: "nom_voie",
-    title: "Nom de la voie",
+    name: "name",
+    title: "Nom de l'organisation",
     optional: false,
     allowMultiple: false
   },
   {
-    name: "code_postal",
-    title: "Code postal",
-    optional: false,
-    allowMultiple: false
-  },
-  {
-    name: "ville",
-    title: "Ville",
-    optional: false,
-    allowMultiple: false
-  },
-  {
-    name: "dept",
-    title: "Département",
-    optional: true,
-    allowMultiple: false
-  },
-  {
-    name: "region",
-    title: "Région",
-    optional: true,
-    allowMultiple: false
-  },
-  {
-    name: "x",
-    title: "Longitude",
-    optional: true,
-    allowMultiple: false
-  },
-  {
-    name: "y",
-    title: "Latitude",
+    name: "slug",
+    title: "Slug de l'organisation",
     optional: true,
     allowMultiple: false
   }
