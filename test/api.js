@@ -46,11 +46,12 @@ async function search() {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'X-Fields': 'data{id,logo_thumbnail,metrics,name,page,slug}'
+        'X-Fields': 'data{id,name,slug}'
+        // 'X-Fields': 'data{id,logo_thumbnail,metrics,name,page,slug}'
       }
     });
-    const results = await response.json();
-    document.getElementById('debug').innerHTML = JSON.stringify(results);
+    const results = await response.json().data;
+    // document.getElementById('debug').innerHTML = JSON.stringify(results);
 
     // const addressArray = result.features.map(feature => {
     //   const { housenumber, street, postcode, city, x, y, context, score } = feature.properties;
@@ -71,35 +72,24 @@ async function search() {
     //   };
     // });
 
-    // addressArray.sort((a, b) => {
-    //   const cityA = a["code_postal"].toLowerCase();
-    //   const cityB = b["code_postal"].toLowerCase();
-    //   if (cityA < cityB) return -1;
-    //   if (cityA > cityB) return 1;
-    //   return 0;
-    // });
+    const tbody = document.querySelector('#search-results tbody');
+    tbody.innerHTML = "";
 
-    // const tbody = document.querySelector('#addressTable tbody');
-    // tbody.innerHTML = "";
+    results.forEach((result, index) => {
+      const row = document.createElement('tr');
 
-    // addressArray.forEach((address, index) => {
-    //   const row = document.createElement('tr');
+      // row.addEventListener('click', () => {
+      //   maj_adresse(result[index]);
+      // });
 
-    //   row.addEventListener('click', () => {
-    //     let adresse = addressArray[index];
-    //     maj_adresse(adresse);
-    //   });
+      Object.keys(result).forEach(key => {
+        const cell = document.createElement('td');
+        cell.innerHTML = result[key];
+        row.appendChild(cell);
+      });
 
-    //   Object.keys(address).forEach(key => {
-    //     if (key != "x" && key != "y") {
-    //       const cell = document.createElement('td');
-    //       cell.innerHTML = address[key];
-    //       row.appendChild(cell);
-    //     }
-    //   });
-
-    //   tbody.appendChild(row);
-    // });
+      tbody.appendChild(row);
+    });
 
   } catch (e) {
     console.error(e);
