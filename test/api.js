@@ -23,7 +23,13 @@ function msg(message) {
 async function search() {
   try {
     msg("&nbsp;");
-    const query = document.getElementById('search-input').value;
+
+    const tbody = document.querySelector('#search-results tbody');
+    tbody.innerHTML = ""
+
+    const query = document.getElementById('search-input').value.trim();
+    if (!query) return;
+
     const url = url_base + query;
     const response = await fetch(url, {
       method: 'GET',
@@ -52,20 +58,25 @@ async function search() {
     // TODO: description as tooltip ?
     // TODO: display extras.siretisation:denomination_unite_legale ?
 
-    const tbody = document.querySelector('#search-results tbody');
-    tbody.innerHTML = ""
     results
       .filter((result) => !(result.deleted || existingIds.includes(result.id)))
       .forEach((result, index) => {
         tbody.innerHTML +=
           `<tr>
-            <td class="centered">
-              <div border><img src="${result.logo_thumbnail}" loading="lazy" width="32"></div>
-              <span class="padded"><a href="${result.page}">${result.name}</a></span></td>
-            <td>${result.id}</td>
-            <td>
-              <button onClick="add(${index}, 'organization', 'include')">Inclure</button>
-              <button onClick="add(${index}, 'organization', 'block')">Bloquer</button>
+            <td class="fr-mx-1w centered">
+              <div class="logo"> <img src="${result.logo_thumbnail}" loading="lazy" width="32"> </div>
+              <span class="fr-ml-1w"> <a href="${result.page}">${result.name}</a> </span>
+            </td>
+            <td class="fr-mx-1w"> ${result.id} </td>
+            <td class="fr-mx-1w">
+              <ul class="fr-btns-group">
+                <li>
+                  <button class="fr-btn" onClick="add(${index}, 'organization', 'include')"> Inclure </button>
+                </li>
+                <li>
+                  <button class="fr-btn fr-btn--secondary" onClick="add(${index}, 'organization', 'block')"> Bloquer </button>
+                </li>
+              </ul>
             </td>
           </tr>`;
       });
