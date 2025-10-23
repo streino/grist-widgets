@@ -55,7 +55,7 @@ async function search() {
 
 async function pick(id, type, operation) {
   const item = searchResults.find((item) => item.id == id);
-  msg(`${operation} ${index}: ${item.id}`)
+  msg(`${operation} ${item.id}`)
 
   const tableId = await grist.getTable().getTableId();
 
@@ -108,10 +108,10 @@ async function updateSearchResults() {
           <span class="fr-mx-2w">
             <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--equisized fr-btns-group--sm">
               <li>
-                <button class="fr-btn fr-btn--secondary fr-m-1v" onClick="pick(${item.id}, 'organization', 'block')"> Block </button>
+                <button class="fr-btn fr-btn--secondary fr-m-1v" onClick="pick('${item.id}', 'organization', 'block')"> Block </button>
               </li>
               <li>
-                <button class="fr-btn fr-m-1v" onClick="pick(${item.id}, 'organization', 'include')"> Include </button>
+                <button class="fr-btn fr-m-1v" onClick="pick('${item.id}', 'organization', 'include')"> Include </button>
               </li>
             </ul>
           </span>
