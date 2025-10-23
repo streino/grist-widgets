@@ -1,4 +1,5 @@
-const url_base = "https://www.data.gouv.fr/api/2/organizations/search/?page_size=10&lang=fr&q="
+const url_base = "https://www.data.gouv.fr/api/2/organizations/search/?lang=fr"
+let page_size = 10;
 let results;
 
 // TODO: for tableId and mappings
@@ -30,7 +31,7 @@ async function search() {
     const query = document.getElementById('search-input').value.trim();
     if (!query) return;
 
-    const url = url_base + query;
+    const url = `${url_base}&page_size=${page_size}&q=${query}`;
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -39,7 +40,7 @@ async function search() {
       }
     });
     const contents = await response.json();
-    msg(`Found ${contents.total} results`)
+    msg(`Found ${contents.total} results, showing the first ${page_size} below.`)
 
     results = contents.data;
     // document.getElementById('debug').innerHTML = JSON.stringify(results);
