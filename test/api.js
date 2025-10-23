@@ -3,6 +3,7 @@ const url_base = "https://www.data.gouv.fr/api/2/organizations/search/?page_size
 // let nbmax = 5;
 // const minCar = 3;
 // let qValide = true;
+let tableId;
 let results;
 const colsMap = { "ident": "ident", "name": "name", "slug": "slug" };
 const columnsMappingOptions = [
@@ -25,6 +26,12 @@ const columnsMappingOptions = [
     allowMultiple: false
   }
 ];
+
+grist.on("message", (data) => {
+  if (data.tableId) {
+    tableId = data.tableId;
+  }
+});
 
 function ready(fn) {
   if (document.readyState !== 'loading') {
@@ -76,8 +83,21 @@ async function search() {
   }
 }
 
-function add(index, action) {
-  msg(`${action} ${index}: ${results[index].id}`)
+async function add(index, action) {
+  const result = results[index];
+  msg(`${action} ${index}: ${result.id}`)
+  try {
+    await grist.docApi.applyUserActions([
+      ['AddRecord', tableId, null, {
+        ident: result.id,
+        name: result.name,
+        slug: result.slug
+      }]
+    ]);
+    console.log('Row added successfully');
+  } catch (error) {
+    console.error('Error adding row:', error);
+  }
 }
 
 // function maj_adresse(adresse) {
