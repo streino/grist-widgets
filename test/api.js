@@ -3,6 +3,7 @@ const url_base = "https://www.data.gouv.fr/api/2/organizations/search/?page_size
 // let nbmax = 5;
 // const minCar = 3;
 // let qValide = true;
+let results;
 const colsMap = { "ident": "ident", "name": "name", "slug": "slug" };
 const columnsMappingOptions = [
   {
@@ -50,23 +51,28 @@ async function search() {
       }
     });
     const contents = await response.json();
-    const results = contents.data;
+    results = contents.data;
     // document.getElementById('debug').innerHTML = JSON.stringify(results);
 
     const tbody = document.querySelector('#search-results tbody');
-    tbody.innerHTML = results.map((result) =>
-      `<tr>
-      <td><img src="${result.logo_thumbnail}">
+    tbody.innerHTML = ""
+    results.forEach((result, index) => {
+      tbody.innerHTML +=
+        `<tr>
+        <td><img src="${result.logo_thumbnail}"> <a href="${result.page}">${result.name}</a></td>
         <td>${result.id}</td>
-        <td><a href="${result.page}">${result.name}</a></td>
-        <td>${result.slug}</td>
-      </tr>`
-    ).join("\n");
+        <td><button onClick="add(${index}, 'include')">Inclure</button><button onClick="add(${index}, 'block')">Bloquer</button></td>
+        </tr>`;
+    });
 
   } catch (e) {
     console.error(e);
     msg("erreur : " + String(e));
   }
+}
+
+function add(index, action) {
+  msg(`${action} ${index}: ${results[index].id}`)
 }
 
 // function maj_adresse(adresse) {
