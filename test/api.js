@@ -3,35 +3,14 @@ const url_base = "https://www.data.gouv.fr/api/2/organizations/search/?page_size
 // let nbmax = 5;
 // const minCar = 3;
 // let qValide = true;
-let tableId;
 let results;
-const columnsMapping = { "id": "id", "name": "name", "slug": "slug" };
-const columnsMappingOptions = [
-  {
-    name: "id",
-    title: "Identifiant de l'organisation",
-    optional: false,
-    allowMultiple: false
-  },
-  {
-    name: "name",
-    title: "Nom de l'organisation",
-    optional: false,
-    allowMultiple: false
-  },
-  {
-    name: "slug",
-    title: "Slug de l'organisation",
-    optional: true,
-    allowMultiple: false
-  }
-];
 
-grist.on("message", (data) => {
-  if (data.tableId) {
-    tableId = data.tableId;
-  }
-});
+// TODO: for tableId and mappings
+// grist.on("message", (data) => {
+//   if (data.tableId) {
+//     tableId = data.tableId;
+//   }
+// });
 
 function ready(fn) {
   if (document.readyState !== 'loading') {
@@ -39,6 +18,10 @@ function ready(fn) {
   } else {
     document.addEventListener('DOMContentLoaded', fn);
   }
+}
+
+function msg(message) {
+  document.getElementById("info").innerHTML = message;
 }
 
 async function search() {
@@ -85,13 +68,17 @@ async function search() {
 
 async function add(index, action) {
   const result = results[index];
+  // TODO: cache?
+  const tableId = await grist.widgetApi.getOption('tableId');
+  const columns = await grist.widgetApi.getOption('columns');
   msg(`${action} ${index}: ${result.id}`)
   try {
+    // FIXME: ensure grist access level
     await grist.docApi.applyUserActions([
       ['AddRecord', tableId, null, {
-        [columnsMapping.id]: result.id,
-        [columnsMapping.name]: result.name,
-        [columnsMapping.slug]: result.slug
+        [columns.id]: result.id,
+        [columns.name]: result.name,
+        [columns.slug]: result.slug
       }]
     ]);
     console.log('Row added successfully');
@@ -100,57 +87,31 @@ async function add(index, action) {
   }
 }
 
-// function maj_adresse(adresse) {
-//   const objMaj = {};
-//   objMaj[colsMap.numero] = adresse.numero;
-//   objMaj[colsMap.nom_voie] = adresse.nom_voie;
-//   objMaj[colsMap.code_postal] = adresse.code_postal;
-//   objMaj[colsMap.ville] = adresse.ville;
-//   if (colsMap.dept) objMaj[colsMap.dept] = adresse.dept;
-//   if (colsMap.region) objMaj[colsMap.region] = adresse.region;
-//   if (colsMap.x) objMaj[colsMap.x] = adresse.x;
-//   if (colsMap.y) objMaj[colsMap.y] = adresse.y;
-
-//   grist.docApi.applyUserActions([['UpdateRecord', "Adresses", id_record, objMaj]]).then(function (e) {
-//     msg("maj ok");
-//   }).catch(function (e) {
-//     msg("erreur " + String(e));
-//   });
-// }
-
-function msg(message) {
-  document.getElementById("info").innerHTML = message;
-}
-
-// async function changeNbMax(e) {
-//   nbmax = e.value;
-//   await grist.setOption('nbmax', nbmax);
-// }
-
-// async function getNbMax() {
-//   nbmax = await grist.getOption('nbmax') || 5;
-//   var combo = document.getElementById("nbmax");
-//   combo.value = nbmax;
-// }
-
-ready(function () {
-  grist.ready({ requiredAccess: 'none', columns: columnsMappingOptions });
-  grist.onRecords((table, mappings) => {
-    getNbMax();
-    columnsMapping.id = mappings.id;
-    columnsMapping.name = mappings.name;
-    columnsMapping.slug = mappings.slug;
-  });
-  grist.onRecord((record, mappings) => {
-    // id_record = record.id;
-    // let q = [];
-    // if (record[mappings.numero].trim() != "") q.push(record[mappings.numero].trim());
-    // if (record[mappings.nom_voie].trim() != "") q.push(record[mappings.nom_voie].trim());
-    // if (record[mappings.code_postal]) q.push(record[mappings.code_postal]);
-    // if (record[mappings.ville].trim() != "") q.push(record[mappings.ville].trim());
-    // url = q.join("+").replace(/[ ]{1,2}/g, "+");
-    // qValide = url.length >= minCar;
-    // url = url_base + url;
-    // document.getElementById("dump").innerHTML = url;
+ready(() => {
+  grist.ready({
+    requiredAccess: "full",
+    columns: [
+      {
+        name: "id",
+        title: "Identifiant de l'organisation",
+        type: "Text",
+        optional: false,
+        allowMultiple: false
+      },
+      {
+        name: "name",
+        title: "Nom de l'organisation",
+        type: "Text",
+        optional: false,
+        allowMultiple: false
+      },
+      {
+        name: "slug",
+        title: "Slug de l'organisation",
+        type: "Text",
+        optional: true,
+        allowMultiple: false
+      }
+    ]
   });
 });
