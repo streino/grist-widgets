@@ -36,7 +36,7 @@ async function search() {
     results = contents.data;
     // document.getElementById('debug').innerHTML = JSON.stringify(results);
 
-    // TODO: flag already added orgs
+    // TODO: remove already added elements, or put GOTO button
 
     const tbody = document.querySelector('#search-results tbody');
     tbody.innerHTML = ""
@@ -97,7 +97,7 @@ ready(() => {
       {
         name: "type",
         title: "Type de l'entité",
-        type: "Text",
+        type: "Choice",
         optional: false,
         allowMultiple: false
       },
