@@ -1,8 +1,4 @@
 const url_base = "https://www.data.gouv.fr/api/2/organizations/search/?page_size=21&lang=fr&q="
-// let id_record = 0;
-// let nbmax = 5;
-// const minCar = 3;
-// let qValide = true;
 let results;
 
 // TODO: for tableId and mappings
@@ -26,10 +22,6 @@ function msg(message) {
 
 async function search() {
   try {
-    // if (!qValide) {
-    //   msg(`La requête doit comporter au moins ${minCar} caractères`);
-    //   return;
-    // }
     msg("&nbsp;");
     const query = document.getElementById('search-input').value;
     const url = url_base + query;
@@ -43,6 +35,8 @@ async function search() {
     const contents = await response.json();
     results = contents.data;
     // document.getElementById('debug').innerHTML = JSON.stringify(results);
+
+    // TODO: flag already added orgs
 
     const tbody = document.querySelector('#search-results tbody');
     tbody.innerHTML = ""
@@ -69,21 +63,21 @@ async function search() {
 async function add(index, action) {
   const result = results[index];
   // TODO: cache?
-  const tableId = await grist.widgetApi.getOption('tableId');
-  const columns = await grist.widgetApi.getOption('columns');
+  const options = await grist.getOptions();  // DEBUG
+  const tableId = await grist.getTable().getTableId();
+  const columns = await grist.getOption("columns");
   msg(`${action} ${index}: ${result.id}`)
   try {
-    // FIXME: ensure grist access level
     await grist.docApi.applyUserActions([
-      ['AddRecord', tableId, null, {
+      ["AddRecord", tableId, null, {
         [columns.id]: result.id,
         [columns.name]: result.name,
         [columns.slug]: result.slug
       }]
     ]);
-    console.log('Row added successfully');
+    console.log("Row added successfully");
   } catch (error) {
-    console.error('Error adding row:', error);
+    console.error("Error adding row:", error);
   }
 }
 
