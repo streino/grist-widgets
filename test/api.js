@@ -36,7 +36,7 @@ async function search() {
     results = contents.data;
     // document.getElementById('debug').innerHTML = JSON.stringify(results);
 
-    const existingIds = grist
+    const existingIds = await grist
       .fetchSelectedTable({format: "columns", keepEncoded: true})
       .then((table) => {
         return table.identifier;
