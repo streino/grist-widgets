@@ -25,8 +25,8 @@ async function search() {
   try {
     msg("&nbsp;");
 
-    const tbody = document.querySelector('#search-results tbody');
-    tbody.innerHTML = ""
+    const sr = document.getElementById('search-results');
+    sr.innerHTML = ""
 
     const query = document.getElementById('search-input').value.trim();
     if (!query) return;
@@ -63,24 +63,18 @@ async function search() {
     results
       .filter((result) => !(result.deleted || existingIds.includes(result.id)))
       .forEach((result, index) => {
-        tbody.innerHTML +=
-          `<tr>
-            <td class="fr-mx-1w centered">
-              <div class="logo"> <img src="${result.logo_thumbnail}" loading="lazy" width="32"> </div>
-              <span class="fr-ml-1w"> <a href="${result.page}">${result.name}</a> </span>
-            </td>
-            <td class="fr-mx-1w"> ${result.id} </td>
-            <td class="fr-mx-1w">
-              <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--equisized fr-btns-group--sm">
-                <li>
-                  <button class="fr-btn" onClick="add(${index}, 'organization', 'include')"> Inclure </button>
-                </li>
-                <li>
-                  <button class="fr-btn fr-btn--secondary" onClick="add(${index}, 'organization', 'block')"> Bloquer </button>
-                </li>
-              </ul>
-            </td>
-          </tr>`;
+        sr.innerHTML +=
+          `<ul class="fr-btns-group fr-btns-group--inline fr-btns-group--equisized fr-btns-group--sm">
+            <li>
+              <button class="fr-btn fr-mx-1v fr-my-0" onClick="add(${index}, 'organization', 'include')"> Include </button>
+            </li>
+            <li>
+              <button class="fr-btn fr-btn--secondary fr-mx-1v fr-my-0" onClick="add(${index}, 'organization', 'block')"> Block </button>
+            </li>
+          </ul>
+          <img class="logo fr-ml-1w" src="${result.logo_thumbnail}" loading="lazy" width="32"/>
+          <span class="fr-ml-1w"> <a href="${result.page}"> ${result.name} </a> </span>
+          <span class="fr-ml-1w fr-text--sm grey-main-525"> ${result.id} </span>`;
       });
 
   } catch (err) {
