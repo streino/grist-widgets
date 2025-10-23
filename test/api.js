@@ -64,17 +64,22 @@ async function search() {
       .filter((result) => !(result.deleted || existingIds.includes(result.id)))
       .forEach((result, index) => {
         sr.innerHTML +=
-          `<ul class="fr-btns-group fr-btns-group--inline fr-btns-group--equisized fr-btns-group--sm">
-            <li>
-              <button class="fr-btn fr-mx-1v fr-my-0" onClick="add(${index}, 'organization', 'include')"> Include </button>
-            </li>
-            <li>
-              <button class="fr-btn fr-btn--secondary fr-mx-1v fr-my-0" onClick="add(${index}, 'organization', 'block')"> Block </button>
-            </li>
-          </ul>
-          <img class="logo fr-ml-1w" src="${result.logo_thumbnail}" loading="lazy" width="32"/>
-          <span class="fr-ml-1w"> <a href="${result.page}"> ${result.name} </a> </span>
-          <span class="fr-ml-1w fr-text--sm grey-main-525"> ${result.id} </span>`;
+          `
+          <div class="centered fr-m-0">
+            <span class="fr-ml-1w">
+              <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--equisized fr-btns-group--sm">
+                <li>
+                  <button class="fr-btn fr-mx-1v fr-my-0" onClick="add(${index}, 'organization', 'include')"> Include </button>
+                </li>
+                <li>
+                  <button class="fr-btn fr-btn--secondary fr-mx-1v fr-my-0" onClick="add(${index}, 'organization', 'block')"> Block </button>
+                </li>
+              </ul>
+            </span>
+            <span class="fr-ml-1w"> <img class="logo fr-ml-1w" src="${result.logo_thumbnail}" loading="lazy" width="32"/> </span>
+            <span class="fr-ml-1w"> <a href="${result.page}"> ${result.name} </a> </span>
+            <span class="fr-ml-1w fr-text--sm grey-main-525"> ${result.id} </span>
+          </div>`;
       });
 
   } catch (err) {
