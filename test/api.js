@@ -62,18 +62,18 @@ async function search() {
 
 async function add(index, action) {
   const result = results[index];
-  // TODO: cache?
-  const options = await grist.getOptions();  // DEBUG
-  const tableId = await grist.getTable().getTableId();
-  const columns = await grist.getOption("columns");
   msg(`${action} ${index}: ${result.id}`)
+
+  const tableId = await grist.getTable().getTableId();
+  const record = await grist.mapColumnNames({
+    id: result.id,
+    name: result.name,
+    slug: result.slug
+  });
+
   try {
     await grist.docApi.applyUserActions([
-      ["AddRecord", tableId, null, {
-        [columns.id]: result.id,
-        [columns.name]: result.name,
-        [columns.slug]: result.slug
-      }]
+      ["AddRecord", tableId, null, record]
     ]);
     console.log("Row added successfully");
   } catch (error) {
