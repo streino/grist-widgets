@@ -1,4 +1,4 @@
-const url_base = "https://www.data.gouv.fr/api/2/organizations/search/?lang=fr&page_size=10&q="
+const url_base = "https://www.data.gouv.fr/api/2/organizations/search/?page_size=21&lang=fr&q="
 // let id_record = 0;
 // let nbmax = 5;
 // const minCar = 3;
@@ -46,9 +46,10 @@ async function search() {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        'X-Fields': 'data{id,logo_thumbnail,metrics,name,page,slug}'
       }
     });
-    results = response.json();
+    const results = response.json();
     document.getElementById('debug').innerHTML = JSON.stringify(results);
 
     // const addressArray = result.features.map(feature => {
