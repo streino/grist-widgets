@@ -4,10 +4,10 @@ let id_record = 0;
 let nbmax = 5;
 const minCar = 10;
 let qValide = true;
-const colsMap = { "numero": "numero", "nom_voie": "nom_voie", "code_postal": "code_postal", "ville": "ville", "dept": "dept", "region": "region", "x": "x", "y": "y" };
+const colsMap = { "ident": "ident", "name": "name", "slug": "slug" };
 const columnsMappingOptions = [
   {
-    name: "id",
+    name: "ident",
     title: "Identifiant de l'organisation",
     optional: false,
     allowMultiple: false
@@ -154,14 +154,9 @@ ready(function () {
   grist.ready({ requiredAccess: 'none', columns: columnsMappingOptions });
   grist.onRecords((table, mappings) => {
     getNbMax();
-    colsMap.numero = mappings.numero;
-    colsMap.nom_voie = mappings.nom_voie;
-    colsMap.code_postal = mappings.code_postal;
-    colsMap.ville = mappings.ville;
-    colsMap.dept = mappings.dept;
-    colsMap.region = mappings.region;
-    colsMap.x = mappings.x;
-    colsMap.y = mappings.y;
+    colsMap.ident = mappings.ident;
+    colsMap.name = mappings.name;
+    colsMap.slug = mappings.slug;
   });
   grist.onRecord((record, mappings) => {
     id_record = record.id;
