@@ -59,7 +59,7 @@ async function search() {
     results.forEach((result, index) => {
       tbody.innerHTML +=
         `<tr>
-        <td><img src="${result.logo_thumbnail}"> <a href="${result.page}">${result.name}</a></td>
+        <td><img src="${result.logo_thumbnail}" width="32"> <a href="${result.page}">${result.name}</a></td>
         <td>${result.id}</td>
         <td><button onClick="add(${index}, 'include')">Inclure</button><button onClick="add(${index}, 'block')">Bloquer</button></td>
         </tr>`;
