@@ -1,6 +1,6 @@
 const url_base = "https://www.data.gouv.fr/api/2/organizations/search/?lang=fr"
 let page_size = 10;
-let results;
+let searchResults;
 
 // TODO: for tableId and mappings
 // grist.on("message", (data) => {
@@ -42,46 +42,10 @@ async function search() {
     const contents = await response.json();
     msg(`Found ${contents.total} results, showing the first ${page_size} below.`)
 
-    results = contents.data;
-    // document.getElementById('debug').innerHTML = JSON.stringify(results);
+    searchResults = contents.data;
+    // document.getElementById('debug').innerHTML = JSON.stringify(searchResults);
 
-    const existingIds = await grist
-      .fetchSelectedTable({format: "columns", keepEncoded: true})
-      .then((table) => {
-        return table.identifier;
-      })
-      .catch((err) => {
-        console.error(err);
-        msg("Error: " + String(err));
-      });
-
-    // TODO: display metrics.datasets, metrics.dataservices
-    // TODO: display badges[].kind ?
-    // TODO: description as tooltip ?
-    // TODO: display extras.siretisation:denomination_unite_legale ?
-
-    results
-      .filter((result) => !(result.deleted || existingIds.includes(result.id)))
-      .forEach((result, index) => {
-        sr.innerHTML +=
-          `
-          <div class="fr-grid-row fr-grid-row--middle">
-            <span class="fr-mx-2w">
-              <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--equisized fr-btns-group--sm">
-                <li>
-                  <button class="fr-btn fr-btn--secondary fr-m-1v" onClick="add(${index}, 'organization', 'block')"> Block </button>
-                </li>
-                <li>
-                  <button class="fr-btn fr-m-1v" onClick="add(${index}, 'organization', 'include')"> Include </button>
-                </li>
-              </ul>
-            </span>
-            <span class="fr-ml-1v">
-              <img style="logo" src="${result.logo_thumbnail}" width="32" loading="lazy"/>
-            </span>
-            <span class="fr-mx-1v"> <a href="${result.page}"> ${result.name} </a> [${result.id}] </span>
-          </div>`;
-      });
+    updateSearchResults();
 
   } catch (err) {
     console.error(err);
@@ -90,17 +54,18 @@ async function search() {
 }
 
 async function add(index, type, operation) {
-  const result = results[index];
-  msg(`${operation} ${index}: ${result.id}`)
+  const item = searchResults[index];
+  msg(`${operation} ${index}: ${item.id}`)
 
   const tableId = await grist.getTable().getTableId();
+
   // FIXME: both grist.mapColumnNames() and grist.mapColumnNamesBack() return null trying to map record bellow...
   const record = {
     operation: operation,
     type: type,
-    identifier: result.id,
-    name: result.name,
-    page: result.page
+    identifier: item.id,
+    name: item.name,
+    page: item.page
   };
   try {
     await grist.docApi.applyUserActions([
@@ -110,6 +75,55 @@ async function add(index, type, operation) {
   } catch (error) {
     console.error("Error adding row:", error);
   }
+
+  updateSearchResults();
+}
+
+async function updateSearchResults() {
+  const sr = document.getElementById('search-results');
+  sr.innerHTML = ""
+
+  // FIXME: not super efficient...
+  const existingIds = await grist
+    .fetchSelectedTable({format: "columns", keepEncoded: true})
+    .then((table) => {
+      return table.identifier;
+    })
+    .catch((err) => {
+      console.error(err);
+      msg("Error: " + String(err));
+    });
+
+  // TODO: display metrics.datasets, metrics.dataservices
+  // TODO: display badges[].kind ?
+  // TODO: description as tooltip ?
+  // TODO: display extras.siretisation:denomination_unite_legale ?
+
+  searchResults
+    .filter((item) => !(item.deleted || existingIds.includes(item.id)))
+    .forEach((item, index) => {
+      sr.innerHTML +=
+        `
+        <div class="fr-grid-row fr-grid-row--middle">
+          <span class="fr-mx-2w">
+            <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--equisized fr-btns-group--sm">
+              <li>
+                <button class="fr-btn fr-btn--secondary fr-m-1v" onClick="add(${index}, 'organization', 'block')"> Block </button>
+              </li>
+              <li>
+                <button class="fr-btn fr-m-1v" onClick="add(${index}, 'organization', 'include')"> Include </button>
+              </li>
+            </ul>
+          </span>
+          <span>
+            <span class="fr-mx-1v">
+              <img class="logo fr-ml-1v" src="${item.logo_thumbnail}" width="32" loading="lazy"/>
+            </span>
+            <span class="fr-mx-1v"> <a href="${item.page}"> ${item.name} </a> </span>
+            <span class="fr-mx-1v"> [${item.id}] </span>
+          </span>
+        </div>`;
+    });
 }
 
 ready(() => {
