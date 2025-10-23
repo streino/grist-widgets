@@ -29,11 +29,12 @@ async function search() {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'X-Fields': 'data{deleted,id,logo_thumbnail,metrics{dataservices,datasets},name,page}'
+        'X-Fields': 'data{deleted,id,logo_thumbnail,metrics{dataservices,datasets},name,page},total'
       }
     });
     const contents = await response.json();
     results = contents.data;
+    msg(`Found ${results.total} results`)
     // document.getElementById('debug').innerHTML = JSON.stringify(results);
 
     const existingIds = await grist
@@ -43,7 +44,7 @@ async function search() {
       })
       .catch((err) => {
         console.error(err);
-        msg("erreur : " + String(err));
+        msg("Error: " + String(err));
       });
 
     // TODO: display metrics.datasets, metrics.dataservices
@@ -71,7 +72,7 @@ async function search() {
 
   } catch (err) {
     console.error(err);
-    msg("erreur : " + String(err));
+    msg("Error: " + String(err));
   }
 }
 
