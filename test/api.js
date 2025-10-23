@@ -65,9 +65,8 @@ async function search() {
       .forEach((result, index) => {
         sr.innerHTML +=
           `
-          <div class="fr-container--fluid">
           <div class="fr-grid-row fr-grid-row--middle">
-            <span class="fr-mr-2w">
+            <span class="fr-mx-2w">
               <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--equisized fr-btns-group--sm">
                 <li>
                   <button class="fr-btn fr-btn--secondary fr-m-1v" onClick="add(${index}, 'organization', 'block')"> Block </button>
@@ -77,10 +76,12 @@ async function search() {
                 </li>
               </ul>
             </span>
-            <span class="fr-mr-1w">
+            <span class="fr-ml-1w">
               <img style="border: 1px solid lightgrey" src="${result.logo_thumbnail}" width="32" loading="lazy"/>
             </span>
-            <span> <a href="${result.page}"> ${result.name} </a> - ${result.id} </span>
+            <span> <a href="${result.page}"> ${result.name} </a> </span>
+            -
+            <span class="fr-text--sm"> ${result.id} </span>
           </div>`;
       });
 
