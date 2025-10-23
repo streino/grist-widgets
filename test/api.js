@@ -49,7 +49,7 @@ async function search() {
         'X-Fields': 'data{id,logo_thumbnail,metrics,name,page,slug}'
       }
     });
-    const results = response.json();
+    const results = await response.json();
     document.getElementById('debug').innerHTML = JSON.stringify(results);
 
     // const addressArray = result.features.map(feature => {
