@@ -29,7 +29,7 @@ async function search() {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'X-Fields': 'data{id,logo_thumbnail,metrics,name,page,slug}'
+        'X-Fields': 'data{id,logo_thumbnail,metrics,name,page}'
       }
     });
     const contents = await response.json();
@@ -48,8 +48,8 @@ async function search() {
             <span class="padded"><a href="${result.page}">${result.name}</a></span></td>
           <td>${result.id}</td>
           <td>
-            <button onClick="add(${index}, 'include')">Inclure</button>
-            <button onClick="add(${index}, 'block')">Bloquer</button>
+            <button onClick="add(${index}, 'organization', 'include')">Inclure</button>
+            <button onClick="add(${index}, 'organization', 'block')">Bloquer</button>
           </td>
         </tr>`;
     });
@@ -60,16 +60,18 @@ async function search() {
   }
 }
 
-async function add(index, action) {
+async function add(index, type, operation) {
   const result = results[index];
-  msg(`${action} ${index}: ${result.id}`)
+  msg(`${operation} ${index}: ${result.id}`)
 
   const tableId = await grist.getTable().getTableId();
   // FIXME: both grist.mapColumnNames() and grist.mapColumnNamesBack() return null trying to map record bellow...
   const record = {
+    operation: operation,
+    type: type,
     identifier: result.id,
     name: result.name,
-    slug: result.slug
+    page: result.page
   };
   try {
     await grist.docApi.applyUserActions([
@@ -86,22 +88,36 @@ ready(() => {
     requiredAccess: "full",
     columns: [
       {
+        name: "operation",
+        title: "Opération à appliquer",
+        type: "Choice",
+        optional: false,
+        allowMultiple: false
+      },
+      {
+        name: "type",
+        title: "Type de l'entité",
+        type: "Text",
+        optional: false,
+        allowMultiple: false
+      },
+      {
         name: "identifier",
-        title: "Identifiant de l'organisation",
+        title: "Identifiant de l'entité",
         type: "Text",
         optional: false,
         allowMultiple: false
       },
       {
         name: "name",
-        title: "Nom de l'organisation",
+        title: "Nom de l'entité",
         type: "Text",
         optional: false,
         allowMultiple: false
       },
       {
-        name: "slug",
-        title: "Slug de l'organisation",
+        name: "page",
+        title: "Page data.gouv de l'entité",
         type: "Text",
         optional: true,
         allowMultiple: false
