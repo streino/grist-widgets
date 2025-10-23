@@ -53,8 +53,8 @@ async function search() {
   }
 }
 
-async function add(index, type, operation) {
-  const item = searchResults[index];
+async function pick(id, type, operation) {
+  const item = searchResults.find((item) => item.id == id);
   msg(`${operation} ${index}: ${item.id}`)
 
   const tableId = await grist.getTable().getTableId();
@@ -108,20 +108,16 @@ async function updateSearchResults() {
           <span class="fr-mx-2w">
             <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--equisized fr-btns-group--sm">
               <li>
-                <button class="fr-btn fr-btn--secondary fr-m-1v" onClick="add(${index}, 'organization', 'block')"> Block </button>
+                <button class="fr-btn fr-btn--secondary fr-m-1v" onClick="pick(${item.id}, 'organization', 'block')"> Block </button>
               </li>
               <li>
-                <button class="fr-btn fr-m-1v" onClick="add(${index}, 'organization', 'include')"> Include </button>
+                <button class="fr-btn fr-m-1v" onClick="pick(${item.id}, 'organization', 'include')"> Include </button>
               </li>
             </ul>
           </span>
-          <span>
-            <span class="fr-mx-1v">
-              <img class="logo fr-ml-1v" src="${item.logo_thumbnail}" width="32" loading="lazy"/>
-            </span>
-            <span class="fr-mx-1v"> <a href="${item.page}"> ${item.name} </a> </span>
-            <span class="fr-mx-1v"> [${item.id}] </span>
-          </span>
+          <span class="fr-mx-1v"> <img class="logo" src="${item.logo_thumbnail}" width="32" loading="lazy"/> </span>
+          <span class="fr-mx-1v"> <a href="${item.page}">${item.name}</a> </span>
+          <span class="fr-mx-1v"> [${item.id}] </span>
         </div>`;
     });
 }
