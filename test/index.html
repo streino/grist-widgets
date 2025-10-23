@@ -14,20 +14,24 @@
     </style>
   </head>
   <body>
-    <div class="fr-m-1v">
-      <div class="fr-search-bar" role="search">
-        <label class="fr-label" for="search-input"> Rechercher </label>
-        <input class="fr-input" aria-describedby="search-input-messages" placeholder="" id="search-input" type="search">
-        <div class="fr-messages-group" id="search-input-messages" aria-live="polite"> </div>
-        <button title="Rechercher" type="button" class="fr-btn" onClick="search()"> Rechercher </button>
+    <div class="fr-container">
+      <div class="fr-grid-row fr-grid-row--center">
+        <div class="fr-col-8">
+          <div class="fr-search-bar" role="search">
+            <label class="fr-label" for="search-input"> Rechercher </label>
+            <input class="fr-input" aria-describedby="search-input-messages" placeholder="" id="search-input" type="search">
+            <div class="fr-messages-group" id="search-input-messages" aria-live="polite"> </div>
+            <button title="Rechercher" type="button" class="fr-btn" onClick="search()"> Rechercher </button>
+          </div>
+          <div id="info"> &nbsp; </div>
+          <table id="search-results">
+            <thead>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div id="info"> &nbsp; </div>
-      <table id="search-results">
-        <thead>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
     </div>
     <div id="debug"></div>
     <script src="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.2/dist/dsfr.module.min.js"></script>
