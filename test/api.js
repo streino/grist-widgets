@@ -39,8 +39,9 @@ async function search() {
       }
     });
     const contents = await response.json();
+    msg(`Found ${contents.total} results`)
+
     results = contents.data;
-    msg(`Found ${results.total} results`)
     // document.getElementById('debug').innerHTML = JSON.stringify(results);
 
     const existingIds = await grist
