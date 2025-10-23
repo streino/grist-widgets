@@ -42,6 +42,10 @@ async function search() {
     const contents = await response.json();
     msg(`Found ${contents.total} results, showing the first ${page_size} below.`)
 
+    // FIXME: we might not get enough results after filtering
+    // => fetch results until we have enough
+    // => existingIds needs to be fetched here
+
     searchResults = contents.data;
     // document.getElementById('debug').innerHTML = JSON.stringify(searchResults);
 
@@ -76,6 +80,7 @@ async function pick(id, type, operation) {
     console.error("Error adding row:", error);
   }
 
+  // FIXME: we might need to fetch more results so we have enough items to show
   updateSearchResults();
 }
 
@@ -83,7 +88,8 @@ async function updateSearchResults() {
   const sr = document.getElementById('search-results');
   sr.innerHTML = ""
 
-  // FIXME: not super efficient...
+  // FIXME: not super efficient... but reliable, since table could have changed
+  // => watch table changes and update existingIds (and call updateSearchResults again)
   const existingIds = await grist
     .fetchSelectedTable({format: "columns", keepEncoded: true})
     .then((table) => {
