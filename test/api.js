@@ -65,20 +65,20 @@ async function search() {
       .forEach((result, index) => {
         sr.innerHTML +=
           `
-          <div class="centered fr-m-0">
+          <div class="fr-container--fluid">
+          <div class="fr-grid-row fr-grid-row--middle">
             <span class="fr-ml-1w">
               <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--equisized fr-btns-group--sm">
                 <li>
-                  <button class="fr-btn fr-mx-1v fr-my-0" onClick="add(${index}, 'organization', 'include')"> Include </button>
+                  <button class="fr-btn fr-btn--secondary fr-mx-1v fr-my-0" onClick="add(${index}, 'organization', 'block')"> Block </button>
                 </li>
                 <li>
-                  <button class="fr-btn fr-btn--secondary fr-mx-1v fr-my-0" onClick="add(${index}, 'organization', 'block')"> Block </button>
+                  <button class="fr-btn fr-mx-1v fr-my-0" onClick="add(${index}, 'organization', 'include')"> Include </button>
                 </li>
               </ul>
             </span>
-            <span class="fr-ml-1w"> <img class="logo fr-ml-1w" src="${result.logo_thumbnail}" loading="lazy" width="32"/> </span>
-            <span class="fr-ml-1w"> <a href="${result.page}"> ${result.name} </a> </span>
-            <span class="fr-ml-1w fr-text--sm grey-main-525"> ${result.id} </span>
+            <span class="fr-ml-1w"> <img class="fr-border" src="${result.logo_thumbnail}" width="32" loading="lazy"/> </span>
+            <span class="fr-ml-1w"> <a href="${result.page}"> ${result.name} </a> - ${result.id} </span>
           </div>`;
       });
 
