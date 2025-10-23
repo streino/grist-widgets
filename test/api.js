@@ -1,4 +1,4 @@
-const url_base = "https://www.data.gouv.fr/api/2/organizations/search/?page_size=21&lang=fr&q="
+const url_base = "https://www.data.gouv.fr/api/2/organizations/search/?page_size=10&lang=fr&q="
 let results;
 
 // TODO: for tableId and mappings
