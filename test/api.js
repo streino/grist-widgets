@@ -50,46 +50,17 @@ async function search() {
         // 'X-Fields': 'data{id,logo_thumbnail,metrics,name,page,slug}'
       }
     });
-    const results = await response.json().data;
+    const results = await response.json();
     // document.getElementById('debug').innerHTML = JSON.stringify(results);
 
-    // const addressArray = result.features.map(feature => {
-    //   const { housenumber, street, postcode, city, x, y, context, score } = feature.properties;
-    //   const longlat = feature.geometry.coordinates;
-    //   const lgt = longlat[0];
-    //   const ltt = longlat[1];
-    //   let buff = context.split(",");
-    //   return {
-    //     "numero": housenumber || "",
-    //     "nom_voie": street,
-    //     "code_postal": postcode,
-    //     "ville": city,
-    //     "x": lgt,
-    //     "y": ltt,
-    //     "dept": buff[1] ? buff[1].trim() : "",
-    //     "region": buff[2] ? buff[2].trim() : "",
-    //     "score": `<span class='${score > 0.7 ? "ok" : "ko"}'>${(score * 100).toFixed(1)}%</span>`
-    //   };
-    // });
-
     const tbody = document.querySelector('#search-results tbody');
-    tbody.innerHTML = "";
-
-    results.forEach((result, index) => {
-      const row = document.createElement('tr');
-
-      // row.addEventListener('click', () => {
-      //   maj_adresse(result[index]);
-      // });
-
-      Object.keys(result).forEach(key => {
-        const cell = document.createElement('td');
-        cell.innerHTML = result[key];
-        row.appendChild(cell);
-      });
-
-      tbody.appendChild(row);
-    });
+    tbody.innerHTML = results.map((result) =>
+      `<tr>
+        <td>${result.id}</td>
+        <td>${result.name}</td>
+        <td>${result.slug}</td>
+      </tr>`
+    ).join("\n");
 
   } catch (e) {
     console.error(e);
