@@ -29,30 +29,39 @@ async function search() {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'X-Fields': 'data{id,logo_thumbnail,metrics,name,page}'
+        'X-Fields': 'data{deleted,id,logo_thumbnail,metrics{dataservices,datasets},name,page}'
       }
     });
     const contents = await response.json();
     results = contents.data;
     // document.getElementById('debug').innerHTML = JSON.stringify(results);
 
-    // TODO: remove already added elements, or put GOTO button
+    const existingIds = grist
+      .fetchSelectedTable({format: "columns", keepEncoded: true})
+      .then((table) => table.identifier);
+
+    // TODO: display metrics.datasets, metrics.dataservices
+    // TODO: display badges[].kind ?
+    // TODO: description as tooltip ?
+    // TODO: display extras.siretisation:denomination_unite_legale ?
 
     const tbody = document.querySelector('#search-results tbody');
     tbody.innerHTML = ""
-    results.forEach((result, index) => {
-      tbody.innerHTML +=
-        `<tr>
-          <td class="centered">
-            <div border><img src="${result.logo_thumbnail}" loading="lazy" width="32"></div>
-            <span class="padded"><a href="${result.page}">${result.name}</a></span></td>
-          <td>${result.id}</td>
-          <td>
-            <button onClick="add(${index}, 'organization', 'include')">Inclure</button>
-            <button onClick="add(${index}, 'organization', 'block')">Bloquer</button>
-          </td>
-        </tr>`;
-    });
+    results
+      .filter((result) => !(result.deleted || existingIds.includes(result.id)))
+      .forEach((result, index) => {
+        tbody.innerHTML +=
+          `<tr>
+            <td class="centered">
+              <div border><img src="${result.logo_thumbnail}" loading="lazy" width="32"></div>
+              <span class="padded"><a href="${result.page}">${result.name}</a></span></td>
+            <td>${result.id}</td>
+            <td>
+              <button onClick="add(${index}, 'organization', 'include')">Inclure</button>
+              <button onClick="add(${index}, 'organization', 'block')">Bloquer</button>
+            </td>
+          </tr>`;
+      });
 
   } catch (e) {
     console.error(e);
