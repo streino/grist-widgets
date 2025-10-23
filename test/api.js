@@ -70,7 +70,7 @@ async function search() {
             </td>
             <td class="fr-mx-1w"> ${result.id} </td>
             <td class="fr-mx-1w">
-              <ul class="fr-btns-group">
+              <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--equisized fr-btns-group--sm">
                 <li>
                   <button class="fr-btn" onClick="add(${index}, 'organization', 'include')"> Inclure </button>
                 </li>
