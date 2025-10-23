@@ -38,7 +38,13 @@ async function search() {
 
     const existingIds = grist
       .fetchSelectedTable({format: "columns", keepEncoded: true})
-      .then((table) => table.identifier);
+      .then((table) => {
+        return table.identifier;
+      })
+      .catch((err) => {
+        console.error(err);
+        msg("erreur : " + String(err));
+      });
 
     // TODO: display metrics.datasets, metrics.dataservices
     // TODO: display badges[].kind ?
@@ -63,9 +69,9 @@ async function search() {
           </tr>`;
       });
 
-  } catch (e) {
-    console.error(e);
-    msg("erreur : " + String(e));
+  } catch (err) {
+    console.error(err);
+    msg("erreur : " + String(err));
   }
 }
 
