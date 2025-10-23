@@ -65,12 +65,12 @@ async function add(index, action) {
   msg(`${action} ${index}: ${result.id}`)
 
   const tableId = await grist.getTable().getTableId();
-  const record = await grist.mapColumnNamesBack({
-    id: result.id,
+  // FIXME: both grist.mapColumnNames() and grist.mapColumnNamesBack() return null trying to map record bellow...
+  const record = {
+    identifier: result.id,
     name: result.name,
     slug: result.slug
-  });
-
+  };
   try {
     await grist.docApi.applyUserActions([
       ["AddRecord", tableId, null, record]
@@ -86,7 +86,7 @@ ready(() => {
     requiredAccess: "full",
     columns: [
       {
-        name: "id",
+        name: "identifier",
         title: "Identifiant de l'organisation",
         type: "Text",
         optional: false,
