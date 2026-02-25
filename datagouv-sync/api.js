@@ -11,7 +11,7 @@ function debug(message) {
 }
 
 async function sync() {
-  debug("START");
+  debug("START!");
   try {
   const tableId = await grist.selectedTable.getTableId();
   debug(`tableId=${tableId}`);
