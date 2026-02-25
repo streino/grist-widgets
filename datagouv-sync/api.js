@@ -35,8 +35,8 @@ async function sync() {
         {
           method: "GET",
           headers: {
-            "Content-Type": "application/json",
-            "X-Fields": "name,self_web_url,title,uri"
+            "Content-Type": "application/json"
+            // "X-Fields": "name,self_web_url,title,uri"
           }
         }
       );
