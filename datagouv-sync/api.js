@@ -12,6 +12,7 @@ function debug(message) {
 
 async function sync() {
   debug("START");
+  try {
   const tableId = await grist.selectedTable.getTableId();
   debug(`tableId=${tableId}`);
   const data = await grist.docApi.fetchTable(tableId);
@@ -58,6 +59,9 @@ async function sync() {
       ["BulkAddOrUpdateRecord", tableId, ids, { Label: labels, URL: urls }]
     ]);
     console.log(`Updated ${ids.length} rows.`);
+  }
+  } catch (err) {
+    debug("Error:" + String(err));
   }
 }
 
