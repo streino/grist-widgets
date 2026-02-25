@@ -12,9 +12,6 @@ function debug(message) {
 
 async function sync() {
   debug("START!");
-  const x = await grist.getTable().getTableId();
-  debug(`x=${x}`);
-  try {
   const tableId = await grist.selectedTable.getTableId();
   debug(`tableId=${tableId}`);
   const data = await grist.docApi.fetchTable(tableId);
@@ -25,8 +22,10 @@ async function sync() {
   const urls = [];
 
   for (const [i, id] of data.id.entries()) {
-    const identifier = data.Identifiant[i].trim();
     const type = data.Type[i].trim().toLowerCase();
+    if (type == "tag") continue;
+
+    const identifier = data.Identifiant[i].trim();
     const object = `${type}s`
     const version = type == "topic" ? "2" : "1";
     debug(`id=${identifier}, object=${object}, version=${version}`);
@@ -46,10 +45,12 @@ async function sync() {
       }
 
       const result = await response.json();
+      const label = result.name || result.title;
+      const url = result.uri;
       ids.push(id);
-      labels.push(result.name || result.title);
-      urls.push(result.uri);
-      debug("OK");
+      labels.push(label);
+      urls.push(url);
+      debug(`OK: label=${label}, url=${url}`)
     } catch (err) {
       console.error(`Error processing row ${object}/${identifier}:`, err);
     }
@@ -61,9 +62,6 @@ async function sync() {
       ["BulkAddOrUpdateRecord", tableId, ids, { Label: labels, URL: urls }]
     ]);
     console.log(`Updated ${ids.length} rows.`);
-  }
-  } catch (err) {
-    debug("Error:" + String(err));
   }
 }
 
