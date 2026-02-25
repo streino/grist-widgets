@@ -11,9 +11,8 @@ function debug(message) {
 }
 
 async function sync() {
-  debug("START...");
+  // debug("START...");
   const tableId = await grist.selectedTable.getTableId();
-  debug(`tableId=${tableId}`);
   const data = await grist.docApi.fetchTable(tableId);
 
   const env = tableId.toLowerCase() == "prod" ? "www" : "demo";
@@ -28,7 +27,7 @@ async function sync() {
     const identifier = data.Identifiant[i].trim();
     const object = `${type}s`
     const version = type == "topic" ? "2" : "1";
-    debug(`id=${identifier}, object=${object}, version=${version}`);
+    // debug(`id=${identifier}, object=${object}, version=${version}`);
 
     try {
       const response = await fetch(
@@ -39,73 +38,36 @@ async function sync() {
         }
       );
       if (!response.ok) {
-        console.warn(`API call failed for ${object}/${identifier}: ${response.status}`);
-        debug("KO");
-        // TODO: visualize error in table?
+        console.warn(`[sync] API call failed for ${object}/${identifier}: ${response.status}`);
+        // debug("KO");
+        // TODO: flag row on error
         continue;
       }
 
       const result = await response.json();
       const label = result.name || result.title || "<missing>";
-      const url = result.uri || "<missing>";
+      const url = result.uri || result.self_web_url || "<missing>";
       ids.push(id);
       labels.push(label);
       urls.push(url);
-      debug(`OK: label=${label}, url=${url}`)
+      // TODO: flag row if missing
+      // debug(`OK: label=${label}, url=${url}`)
     } catch (err) {
-      console.error(`Error processing row ${object}/${identifier}:`, err);
+      console.error(`[sync] Error processing ${object}/${identifier}:`, err);
     }
   }
 
   if (ids.length > 0) {
-    debug("UPDATE");
+    // debug("UPDATE");
     await grist.docApi.applyUserActions([
       ["BulkUpdateRecord", tableId, ids, { Label: labels, URL: urls }]
     ]);
-    console.log(`Updated ${ids.length} rows.`);
+    // debug(`Updated ${ids.length} rows.`)
+    console.log(`[sync] Updated ${ids.length} rows.`);
   }
 }
 
 ready(() => {
-  grist.ready({
-    requiredAccess: "full"
-    // columns: [
-    //   {
-    //     name: "Action",
-    //     title: "Opération à appliquer",
-    //     type: "Choice",
-    //     optional: false,
-    //     allowMultiple: false
-    //   },
-    //   {
-    //     name: "Type",
-    //     title: "Type de l'entité",
-    //     type: "Choice",
-    //     optional: false,
-    //     allowMultiple: false
-    //   },
-    //   {
-    //     name: "Identifiant",
-    //     title: "Identifiant de l'entité",
-    //     type: "Text",
-    //     optional: false,
-    //     allowMultiple: false
-    //   },
-    //   {
-    //     name: "Label",
-    //     title: "Label de l'entité",
-    //     type: "Text",
-    //     optional: false,
-    //     allowMultiple: false
-    //   },
-    //   {
-    //     name: "URL",
-    //     title: "URL data.gouv de l'entité",
-    //     type: "Text",
-    //     optional: true,
-    //     allowMultiple: false
-    //   }
-    // ]
-  });
-  debug("READY");
+  grist.ready({requiredAccess: "full"});
+  // debug("READY");
 });
