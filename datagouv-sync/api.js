@@ -8,8 +8,13 @@ function ready(fn) {
   }
 }
 
+function debug(message) {
+  document.getElementById("debug").textContent += message + "\n";
+}
+
 async function sync() {
   const tableId = await grist.selectedTable.getTableId();
+  debug(`tableId=${tableId}`);
   const data = await grist.docApi.fetchTable(tableId);
 
   const env = tableId.toLowerCase() == "prod" ? "www" : "demo";
@@ -22,6 +27,7 @@ async function sync() {
     const type = data.Type[i].trim().toLowerCase();
     const object = `${type}s`
     const version = type == "topic" ? "2" : "1";
+    debug(`id=${identifier}, object=${object}, version=${version}`);
 
     try {
       const response = await fetch(
@@ -33,6 +39,7 @@ async function sync() {
       );
       if (!response.ok) {
         console.warn(`API call failed for ${object}/${identifier}: ${response.status}`);
+        debug("KO");
         continue;
       }
 
@@ -40,12 +47,14 @@ async function sync() {
       ids.push(id);
       labels.push(result.name || result.title);
       urls.push(result.uri);
+      debug("OK");
     } catch (err) {
       console.error(`Error processing row ${object}/${identifier}:`, err);
     }
   }
 
   if (ids.length > 0) {
+    debug("UPDATE");
     await grist.docApi.applyUserActions([
       ["BulkAddOrUpdateRecord", tableId, ids, { Label: labels, URL: urls }]
     ]);
