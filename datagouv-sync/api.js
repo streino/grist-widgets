@@ -27,7 +27,7 @@ async function sync() {
     const identifier = data.Identifiant[i].trim();
     const object = `${type}s`
     const version = type == "topic" ? "2" : "1";
-    // debug(`id=${identifier}, object=${object}, version=${version}`);
+    debug(`id=${identifier}, object=${object}, version=${version}`);
 
     try {
       const response = await fetch(
@@ -51,7 +51,7 @@ async function sync() {
       labels.push(label);
       urls.push(url);
       // TODO: flag row if missing
-      // debug(`OK: label=${label}, url=${url}`)
+      debug(`OK: label=${label}, url=${url}`)
     } catch (err) {
       console.error(`[sync] Error processing ${object}/${identifier}:`, err);
     }
