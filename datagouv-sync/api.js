@@ -7,7 +7,7 @@ function ready(fn) {
 }
 
 function debug(message) {
-  document.getElementById("debug").textContent += message + "\n";
+  document.getElementById("debug").textContent += message + "<br>";
 }
 
 async function sync() {
