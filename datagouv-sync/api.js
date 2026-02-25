@@ -59,13 +59,8 @@ async function sync() {
   if (ids.length > 0) {
     debug("UPDATE");
     await grist.docApi.applyUserActions([
-      [
-        "BulkAddOrUpdateRecord",
-        tableId,
-        ids,
-        { "Label": labels, "URL": urls },
-        {"on_many": "all", "add": false, "allow_empty_require": false}
-      ]
+      ["BulkUpdateRecord", tableId, ids, { "Label": labels, "URL": urls }],
+      {}
     ]);
     console.log(`Updated ${ids.length} rows.`);
   }
