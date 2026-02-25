@@ -1,5 +1,3 @@
-const env = "www";  // FIXME: demo or prod
-
 function ready(fn) {
   if (document.readyState !== "loading") {
     fn();
@@ -13,6 +11,7 @@ function debug(message) {
 }
 
 async function sync() {
+  debug("START");
   const tableId = await grist.selectedTable.getTableId();
   debug(`tableId=${tableId}`);
   const data = await grist.docApi.fetchTable(tableId);
@@ -103,4 +102,5 @@ ready(() => {
     //   }
     // ]
   });
+  debug("READY");
 });
