@@ -41,12 +41,13 @@ async function sync() {
       if (!response.ok) {
         console.warn(`API call failed for ${object}/${identifier}: ${response.status}`);
         debug("KO");
+        // TODO: visualize error in table?
         continue;
       }
 
       const result = await response.json();
-      const label = result.name || result.title;
-      const url = result.uri;
+      const label = result.name || result.title || "<missing>";
+      const url = result.uri || "<missing>";
       ids.push(id);
       labels.push(label);
       urls.push(url);
@@ -59,8 +60,7 @@ async function sync() {
   if (ids.length > 0) {
     debug("UPDATE");
     await grist.docApi.applyUserActions([
-      ["BulkUpdateRecord", tableId, ids, { "Label": labels, "URL": urls }],
-      {}
+      ["BulkUpdateRecord", tableId, ids, { Label: labels, URL: urls }]
     ]);
     console.log(`Updated ${ids.length} rows.`);
   }
