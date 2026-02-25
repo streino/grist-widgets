@@ -34,7 +34,10 @@ async function sync() {
         `https://${env}.data.gouv.fr/api/${version}/${object}/${identifier}/`,
         {
           method: "GET",
-          headers: {"Content-Type": "application/json", "X-Fields": "name,title,uri"}
+          headers: {
+            "Content-Type": "application/json",
+            "X-Fields": "name,self_web_url,title,uri"
+          }
         }
       );
       if (!response.ok) {
@@ -45,6 +48,7 @@ async function sync() {
       }
 
       const result = await response.json();
+      // fields used here must be declared in X-Fields request header
       const label = result.name || result.title || "<missing>";
       const url = result.uri || result.self_web_url || "<missing>";
       ids.push(id);
