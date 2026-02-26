@@ -7,6 +7,8 @@ function ready(fn) {
 }
 
 async function sync() {
+  console.log(`DatagouvSync: Synchronising...`);
+
   const tableId = await grist.selectedTable.getTableId();
   const data = await grist.docApi.fetchTable(tableId);
   const env = tableId.toLowerCase() == "prod" ? "www" : "demo";
