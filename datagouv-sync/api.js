@@ -34,7 +34,7 @@ async function synchronize() {
   console.log(`DatagouvSync: Synchronising...`);
 
   const tableId = await grist.selectedTable.getTableId();
-  const env = tableId.toLowerCase() == "prod" ? "www" : "demo";
+  const env = tableId.toLowerCase().startsWith("prod") ? "www" : "demo";
 
   const data = await grist.docApi.fetchTable(tableId);
   if (data.id.length == 0) {
