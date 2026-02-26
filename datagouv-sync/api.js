@@ -6,7 +6,8 @@ function ready(fn) {
   }
 }
 
-async function click(btn) {
+async function handleClick(btn) {
+  console.log("DatagouvSync: Start")
   btn.innerHTML = '<span class="spinner"></span> Synchronisation';
   btn.disabled = true;
 
