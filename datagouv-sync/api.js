@@ -79,7 +79,7 @@ async function resolve(env, row) {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "X-Fields": "name,self_web_url,title,uri"
+          "X-Fields": "name,page,self_web_url,title"
         }
       }
     );
@@ -95,10 +95,10 @@ async function resolve(env, row) {
 
   // fields used here must be declared in the X-Fields request header above
   const label = result.name || result.title || "<missing>";
-  const url = result.uri || result.self_web_url || "<missing>";
+  const page = result.page || result.self_web_url || "<missing>";
 
-  console.log(`DatagouvSync: Found ${object}/${identifier}: label="${label}", url=${url}`);
-  return {id: row.id, Label: label, URL: url};
+  console.log(`DatagouvSync: Found ${object}/${identifier}: label="${label}", page=${page}`);
+  return {id: row.id, Label: label, URL: page};
 }
 
 
