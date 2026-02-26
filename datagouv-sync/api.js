@@ -100,7 +100,7 @@ async function resolve(env, row) {
 
 
 function cols2rows(cols) {
-  return Object.keys(cols)[0].map((_, i) =>
+  return Object.values(cols)[0].map((_, i) =>
     Object.fromEntries(
       Object.entries(cols).map(([col, values]) => [col, values[i]])
     )
