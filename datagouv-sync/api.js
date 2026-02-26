@@ -1,3 +1,11 @@
+const POOL_SIZE = 10;
+
+
+ready(() => {
+  grist.ready({requiredAccess: "full"});
+});
+
+
 function ready(fn) {
   if (document.readyState !== "loading") {
     fn();
@@ -6,82 +14,118 @@ function ready(fn) {
   }
 }
 
+
 async function handleClick(btn) {
-  console.log("DatagouvSync: Start")
   btn.innerHTML = 'En cours... <span class="spinner"></span>';
   btn.disabled = true;
 
-  await sync();
+  try {
+    await synchronize();
+  } catch (err) {
+    console.error("DatagouvSync:", err);
+  }
 
   btn.innerHTML = "Synchroniser";
   btn.disabled = false;
 }
 
-async function sync() {
+
+async function synchronize() {
   console.log(`DatagouvSync: Synchronising...`);
 
   const tableId = await grist.selectedTable.getTableId();
-  const data = await grist.docApi.fetchTable(tableId);
   const env = tableId.toLowerCase() == "prod" ? "www" : "demo";
 
-  const ids = [];
-  const labels = [];
-  const urls = [];
-
-  for (const [i, id] of data.id.entries()) {
-    const type = data.Type[i].trim().toLowerCase();
-    if (type == "tag") {
-      continue;
-    }
-
-    const identifier = data.Identifiant[i].trim();
-    const object = `${type}s`
-    const version = type == "topic" ? "2" : "1";
-
-    try {
-      const response = await fetch(
-        `https://${env}.data.gouv.fr/api/${version}/${object}/${identifier}/`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Fields": "name,self_web_url,title,uri"
-          }
-        }
-      );
-      if (!response.ok) {
-        console.warn(`DatagouvSync: API returned: ${response.statusText || response.status}`);
-        continue;
-      }
-
-      // response fields used here must be declared in the X-Fields request header
-      const result = await response.json();
-      const label = result.name || result.title || "<missing>";
-      const url = result.uri || result.self_web_url || "<missing>";
-      ids.push(id);
-      labels.push(label);
-      urls.push(url);
-
-      console.log(`DatagouvSync: Found ${object}/${identifier}: label="${label}", url=${url}`);
-    } catch (err) {
-      console.error(`DatagouvSync: Error processing ${object}/${identifier}:`, err);
-    }
+  const data = await grist.docApi.fetchTable(tableId);
+  if (data.id.length == 0) {
+    console.log(`DatagouvSync: Nothing in grist`);
+    return;
   }
 
-  if (ids.length > 0) {
-    try {
-      await grist.docApi.applyUserActions([
-        ["BulkUpdateRecord", tableId, ids, { Label: labels, URL: urls }]
-      ]);
-      console.log(`DatagouvSync: Updated ${ids.length} row(s)`);
-    } catch (err) {
-      console.error(`DatagouvSync: Failed to update table:`, err);
-    }
-  } else {
+  const rows = cols2rows(data);
+  const resolved = await pooled(POOL_SIZE, rows, row => resolve(env, row)).filter(Boolean);
+  if (resolved.length == 0) {
     console.log(`DatagouvSync: Nothing to update`);
+    return;
+  }
+
+  const cols = rows2cols(resolved);
+  try {
+    await grist.docApi.applyUserActions([
+      ["BulkUpdateRecord", tableId, cols.id, { Label: cols.Label, URL: cols.URL }]
+    ]);
+    console.log(`DatagouvSync: Updated ${cols.id.length} row(s)`);
+  } catch (err) {
+    console.error("DatagouvSync: Failed to update table:", err);
   }
 }
 
-ready(() => {
-  grist.ready({requiredAccess: "full"});
-});
+
+async function resolve(env, row) {
+  const type = row.Type.trim().toLowerCase();
+  if (type == "tag") {
+    return;
+  }
+  const identifier = row.Identifiant.trim();
+  const object = `${type}s`
+  const version = type == "topic" ? "2" : "1";
+
+  try {
+    const response = await fetch(
+      `https://${env}.data.gouv.fr/api/${version}/${object}/${identifier}/`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Fields": "name,self_web_url,title,uri"
+        }
+      }
+    );
+    if (!response.ok) {
+      console.warn(`DatagouvSync: Failed request for ${object}/${identifier}: ${response.statusText || response.status}`);
+      return;
+    }
+
+    const result = await response.json();
+    // fields used here must be declared in the X-Fields request header above
+    const label = result.name || result.title || "<missing>";
+    const url = result.uri || result.self_web_url || "<missing>";
+
+    console.log(`DatagouvSync: Found ${object}/${identifier}: label="${label}", url=${url}`);
+    return {id: id, Label: label, URL: url};
+  } catch (err) {
+    console.error(`DatagouvSync: Error processing ${object}/${identifier}:`, err);
+  }
+}
+
+
+function cols2rows(cols) {
+  return Object.keys(cols)[0].map((_, i) =>
+    Object.fromEntries(
+      Object.entries(cols).map(([col, values]) => [col, values[i]])
+    )
+  );
+}
+
+
+function rows2cols(rows) {
+  return Object.fromEntries(
+    Object.keys(rows[0]).map(col => [col, rows.map(row => row[col])])
+  );
+}
+
+
+async function pooled(limit, array, fn) {
+  const results = [];
+  const executing = new Set();
+
+  for (const item of array) {
+    const p = Promise.resolve().then(() => fn(item));
+    results.push(p);
+    executing.add(p);
+    p.finally(() => executing.delete(p));
+    if (executing.size >= limit) await Promise.race(executing);
+  }
+
+  return Promise.all(results);
+}
