@@ -5,12 +5,17 @@
     <script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
     <script src="api.js"></script>
     <style>
+      button {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
       .spinner {
-        width: 10px; height: 10px;
+        width: 10px;
+        height: 10px;
         border: 2px solid #00000033;
         border-top-color: #000;
         border-radius: 50%;
-        vertical-align: middle;
         display: inline-block;
         animation: spin 0.7s linear infinite;
       }
