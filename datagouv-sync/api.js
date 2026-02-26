@@ -11,7 +11,7 @@ function debug(message) {
 }
 
 async function sync() {
-  // debug("START...");
+  debug("START");
   const tableId = await grist.selectedTable.getTableId();
   const data = await grist.docApi.fetchTable(tableId);
 
@@ -35,8 +35,8 @@ async function sync() {
         {
           method: "GET",
           headers: {
-            "Content-Type": "application/json"
-            // "X-Fields": "name,self_web_url,title,uri"
+            "Content-Type": "application/json",
+            "X-Fields": "name,self_web_url,title,uri"
           }
         }
       );
@@ -73,5 +73,5 @@ async function sync() {
 
 ready(() => {
   grist.ready({requiredAccess: "full"});
-  // debug("READY");
+  debug("READY");
 });
