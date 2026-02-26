@@ -6,6 +6,16 @@ function ready(fn) {
   }
 }
 
+async function click(btn) {
+  btn.innerHTML = '<span class="spinner"></span> Synchronisation';
+  btn.disabled = true;
+
+  await sync();
+
+  btn.innerHTML = "Synchroniser";
+  btn.disabled = false;
+}
+
 async function sync() {
   console.log(`DatagouvSync: Synchronising...`);
 
