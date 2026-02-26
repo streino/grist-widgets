@@ -92,7 +92,7 @@ async function resolve(env, row) {
     const url = result.uri || result.self_web_url || "<missing>";
 
     console.log(`DatagouvSync: Found ${object}/${identifier}: label="${label}", url=${url}`);
-    return {id: id, Label: label, URL: url};
+    return {id: row.id, Label: label, URL: url};
   } catch (err) {
     console.error(`DatagouvSync: Error processing ${object}/${identifier}:`, err);
   }
