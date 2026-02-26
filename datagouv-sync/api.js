@@ -43,7 +43,8 @@ async function synchronize() {
   }
 
   const rows = cols2rows(data);
-  const resolved = await pooled(POOL_SIZE, rows, row => resolve(env, row)).filter(Boolean);
+  const results = await pooled(POOL_SIZE, rows, row => resolve(env, row));
+  const resolved = results.filter(Boolean);
   if (resolved.length == 0) {
     console.log(`DatagouvSync: Nothing to update`);
     return;
@@ -70,6 +71,7 @@ async function resolve(env, row) {
   const object = `${type}s`
   const version = type == "topic" ? "2" : "1";
 
+  let result;
   try {
     const response = await fetch(
       `https://${env}.data.gouv.fr/api/${version}/${object}/${identifier}/`,
@@ -85,17 +87,18 @@ async function resolve(env, row) {
       console.warn(`DatagouvSync: Failed request for ${object}/${identifier}: ${response.statusText || response.status}`);
       return;
     }
-
-    const result = await response.json();
-    // fields used here must be declared in the X-Fields request header above
-    const label = result.name || result.title || "<missing>";
-    const url = result.uri || result.self_web_url || "<missing>";
-
-    console.log(`DatagouvSync: Found ${object}/${identifier}: label="${label}", url=${url}`);
-    return {id: row.id, Label: label, URL: url};
+    result = await response.json();
   } catch (err) {
     console.error(`DatagouvSync: Error processing ${object}/${identifier}:`, err);
+    return;
   }
+
+  // fields used here must be declared in the X-Fields request header above
+  const label = result.name || result.title || "<missing>";
+  const url = result.uri || result.self_web_url || "<missing>";
+
+  console.log(`DatagouvSync: Found ${object}/${identifier}: label="${label}", url=${url}`);
+  return {id: row.id, Label: label, URL: url};
 }
 
 
