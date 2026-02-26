@@ -8,7 +8,7 @@ function ready(fn) {
 
 async function handleClick(btn) {
   console.log("DatagouvSync: Start")
-  btn.innerHTML = 'Synchroniser <span class="spinner"></span>';
+  btn.innerHTML = 'En cours... <span class="spinner"></span>';
   btn.disabled = true;
 
   await sync();
